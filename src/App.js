@@ -1,7 +1,10 @@
 import React from 'react';
 
+
+
 import TodoList from "./components/TodoComponents/TodoList";
 import TodoForm from "./components/TodoComponents/TodoForm";
+import "./components/TodoComponents/Todo.css";
 
 const list = [];
 
@@ -11,14 +14,11 @@ class App extends React.Component {
     this.state = {
       todoList: list,
       task: "",
-      id: "",
-      completed: false,
     }
   }
 
   changeHandler = event => {
     this.setState({ [event.target.name]: event.target.value})
-    console.log(this.state)
   }
 
   addTodoHandler = event => {
@@ -34,12 +34,26 @@ class App extends React.Component {
     })
   }
 
+  toggleTodo = (e, taskId) => {
+    let newTodoList = this.state.todoList.map(task => (task.id === taskId ? {...task, completed: !task.completed} : task))
+    this.setState({
+      todoList: newTodoList
+    })
+  }
+
+  deleteCompletedHandler = e => {
+    e.preventDefault();
+    this.setState({
+      todoList: this.state.todoList.filter(task => !task.completed)
+    });
+  }
+
   render() {
     return (
-      <div>
+      <div className="container">
         <h1>Your Todo List!</h1>
-        <TodoList todoList={this.state.todoList}/>
-        <TodoForm task={this.state.task} changeHandler={this.changeHandler} addTodoHandler={this.addTodoHandler} />
+        <TodoList todoList={this.state.todoList} toggleTodo={this.toggleTodo} />
+        <TodoForm task={this.state.task} changeHandler={this.changeHandler} addTodoHandler={this.addTodoHandler} deleteCompletedHandler={this.deleteCompletedHandler} />
       </div>
     );
   }
